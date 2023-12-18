@@ -10,6 +10,19 @@ import {
     ReservationController,
     RestaurantAdminController, } from './controllers/index.js';
 
+import { 
+    loginValidation,
+    registerValidation,
+    reviewCreateValidation,
+    reviewUpdateValidation,
+    restarauntCreateValidation,
+    restarauntUdateValidation,
+    reservationCreateValidation,
+    restaurantAdmimCreation, } from './validations.js'
+
+import { handleValidationErrors, checkAuth } from './utils/index.js';
+
+
 mongoose 
     .connect('mongodb+srv://admin:Hesus2016@cluster0.vgtv5yo.mongodb.net/TableTap')
     .then(() => console.log('DB OK'))
