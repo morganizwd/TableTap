@@ -14,5 +14,10 @@ const ReviewSchema = new mongoose.Schema(
         },
         text: String,
         rate: Number,
-    }
-)
+    },
+    {
+        timestamps: true,
+    },
+);
+
+export default mongoose.model('Review', ReviewSchema);

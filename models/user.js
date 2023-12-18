@@ -24,7 +24,7 @@ const UserChema = new mongoose.Schema(
     {
         timestamps: true,
     },
-)
+);
 
 UserSchema.index({ email: 1 }, { unique: true });
 

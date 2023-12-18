@@ -12,5 +12,10 @@ const RestaurantAdminSchema = new mongoose.Schema(
             ref: 'Restaurant',
             required: true,
         },
-    }
-)
+    },
+    {
+        timestamps: true,
+    },
+);
+
+export default mongoose.model('RestaurantAdmin', RestaurantAdminSchema);

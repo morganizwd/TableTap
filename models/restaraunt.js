@@ -20,6 +20,6 @@ const RestarauntSchema = new mongoose.Scheme(
     {
         timestamps: true,
     },
-)
+);
 
 export default mongoose.model('Restaraunt', RestarauntSchema);
