@@ -56,6 +56,26 @@ app.post('/auth/login', loginValidation, handleValidationErrors, UserController.
 app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register); 
 app.get('/auth/me', checkAuth, UserController.getMe);
 
+// Restaurant pathes
+app.post('/restaurant-create', 
+    checkAuth, 
+    restarauntCreateValidation, 
+    handleValidationErrors, 
+    RestraurantController.create
+);
+app.delete('/restaurant-delete/:id',
+    checkAuth,
+    RestraurantController.remove
+);
+app.patch('/restaurant-edit/:id',
+    checkAuth,
+    restarauntUdateValidation,
+    handleValidationErrors,
+    RestraurantController.update
+);
+app.get('/restaurants', RestraurantController.getAll);
+app.get('/restaurant/:id', RestraurantController.getOne);
+
 app.listen(4444, (err) => {
     if (err) {
         return console.log(err);
