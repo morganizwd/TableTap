@@ -101,7 +101,7 @@ export const getOne = async (req, res) => {
 
 export const getAll = async (req, res) => {
     try {
-        const restaurants = await RestaurantModel.find();
+        const restaurants = await RestarauntModel.find();
         
         res.json(restaurants);
     } catch(err) {
