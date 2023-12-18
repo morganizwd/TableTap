@@ -24,7 +24,7 @@ export const register = async (req, res) => {
             role: user.role, // Добавьте роль пользователя
         }, 'secret123', {
             expiresIn: '30d',
-        });
+        });        
 
         const {passwordHash, ...userData} = user._doc;
 
@@ -60,13 +60,11 @@ export const login =  async (req, res) => {
         }
 
         const token = jwt.sign({
-            _id: user._id, 
-        }, 
-        'secret123',
-        {
+            _id: user._id,
+            role: user.role, // Добавьте роль пользователя
+        }, 'secret123', {
             expiresIn: '30d',
-        },
-        ); 
+        }); 
 
         const {passwordHash, ...userData} = user._doc;
 
