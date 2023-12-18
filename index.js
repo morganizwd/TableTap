@@ -22,7 +22,6 @@ import {
 
 import { handleValidationErrors, checkAuth } from './utils/index.js';
 
-
 mongoose 
     .connect('mongodb+srv://admin:Hesus2016@cluster0.vgtv5yo.mongodb.net/TableTap')
     .then(() => console.log('DB OK'))
@@ -53,6 +52,9 @@ app.use(cors());
 // });
 
 // auth pathes 
+app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login); 
+app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register); 
+app.get('/auth/me', checkAuth, UserController.getMe);
 
 app.listen(4444, (err) => {
     if (err) {
