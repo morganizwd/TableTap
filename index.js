@@ -35,6 +35,8 @@ app.use(cors());
 //     });
 // });
 
+// auth pathes 
+
 app.listen(4444, (err) => {
     if (err) {
         return console.log(err);
