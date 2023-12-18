@@ -17,6 +17,7 @@ const RestaurantSchema = new mongoose.Schema(
             seats: Number, 
             isAvailable: Boolean, 
         }],
+        cuisine: String,
         rating: Number,
         menuUrl: String,
         imageUrl: String,
