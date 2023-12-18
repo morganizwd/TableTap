@@ -4,7 +4,9 @@ import multer from 'multer';
 import cors from 'cors';
 
 import {
-    UserController, } from './controllers/index.js';
+    UserController,
+    RestraurantController,
+    ReviewController, } from './controllers/index.js';
 
 mongoose 
     .connect('mongodb+srv://admin:Hesus2016@cluster0.vgtv5yo.mongodb.net/TableTap')
