@@ -23,7 +23,11 @@ const ReservationSchema = new mongoose.Schema(
         status: {
             type: String,
             required: true,
-        }
+        },
+        tableNumber: {
+            type: Number,
+            required: true
+        },
     },
     {
         timestamps: true,
