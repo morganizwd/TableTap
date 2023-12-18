@@ -14,6 +14,11 @@ const RestarauntSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        tables: [{
+            number: Number, 
+            seats: Number, 
+            isAvailable: Boolean, 
+        }],
         rating: Number,
         menuUrl: String,
     },
