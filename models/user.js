@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const UserChema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
     {
         fullName: {
             type: String,
@@ -28,4 +28,4 @@ const UserChema = new mongoose.Schema(
 
 UserSchema.index({ email: 1 }, { unique: true });
 
-export default mongoose.model('User', UserChema);
+export default mongoose.model('User', UserSchema);

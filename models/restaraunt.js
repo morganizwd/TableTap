@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RestarauntSchema = new mongoose.Scheme(
+const RestarauntSchema = new mongoose.Schema(
     {
         name: {
             type: String,
