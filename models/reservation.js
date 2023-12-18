@@ -7,10 +7,22 @@ const ReservationSchema = new mongoose.Schema(
             ref: 'User',
             required: true,
         }, 
-        restaraunt: {
+        restaurant: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Restaraunt',
+            ref: 'Restaurant',
+            required: true,
+        },
+        guestsAmount: {
+            type: Number,
+            required: true,
+        },
+        date: {
+            type: Date,
+            required: true,
+        },
+        status: {
+            type: String,
             required: true,
         }
     }
-)
+);
