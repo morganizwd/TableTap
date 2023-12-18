@@ -3,6 +3,9 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import cors from 'cors';
 
+import {
+    UserController, } from './controllers/index.js';
+
 mongoose 
     .connect('mongodb+srv://admin:Hesus2016@cluster0.vgtv5yo.mongodb.net/TableTap')
     .then(() => console.log('DB OK'))
