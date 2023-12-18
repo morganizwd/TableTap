@@ -20,7 +20,7 @@ const RestaurantSchema = new mongoose.Schema(
         rating: Number,
         menuUrl: String,
         imageUrl: String,
-        images: [String], // Массив URL-адресов изображений
+        images: [String],
     },
     {
         timestamps: true,
