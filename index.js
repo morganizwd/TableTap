@@ -6,7 +6,9 @@ import cors from 'cors';
 import {
     UserController,
     RestraurantController,
-    ReviewController, } from './controllers/index.js';
+    ReviewController,
+    ReservationController,
+    RestaurantAdminController, } from './controllers/index.js';
 
 mongoose 
     .connect('mongodb+srv://admin:Hesus2016@cluster0.vgtv5yo.mongodb.net/TableTap')
