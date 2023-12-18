@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
-
-const RestarauntSchema = new mongoose.Schema(
+const RestaurantSchema = new mongoose.Schema(
     {
         name: {
             type: String,
@@ -10,7 +8,7 @@ const RestarauntSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        description : {
+        description: {
             type: String,
             required: true,
         },
@@ -21,10 +19,12 @@ const RestarauntSchema = new mongoose.Schema(
         }],
         rating: Number,
         menuUrl: String,
+        imageUrl: String,
+        images: [String], // Массив URL-адресов изображений
     },
     {
         timestamps: true,
     },
 );
 
-export default mongoose.model('Restaraunt', RestarauntSchema);
+export default mongoose.model('Restaurant', RestaurantSchema);
