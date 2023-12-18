@@ -7,7 +7,16 @@ export default (req, res, next) => {
         try {
             const decoded = jwt.verify(token, 'secret123');
 
-            req.userId = decoded._id; 
+            req.userId = decoded._id;
+            req.userRole = decoded.role; // Сохраните роль пользователя в запросе
+
+            // Проверка роли пользователя
+            if (!['superAdmin', 'restaurantAdmin'].includes(req.userRole)) {
+                return res.status(403).json({
+                    message: 'Access denied: insufficient role',
+                });
+            }
+
             next();
         } catch (e) {
             return res.status(403).json({
@@ -18,5 +27,5 @@ export default (req, res, next) => {
         return res.status(403).json({
             message: 'Access denied',
         });
-    } 
+    }
 };
