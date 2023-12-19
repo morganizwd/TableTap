@@ -40,7 +40,6 @@ export const restarauntCreateValidation = [
     body('tables', 'Tables information is required').isArray(),
     body('tables.*.number', 'Table number must be a number').isNumeric(),
     body('tables.*.seats', 'Seats must be a number').isNumeric(),
-    body('tables.*.isAvailable', 'isAvailable must be a boolean').isBoolean(),
     body('cuisine', 'Invalid cuisine type').custom((value) => {
         const allowedCuisines = [
             'Японская', 'Китайская', 'Русская', 'Беларуская', 'Грузинская',
@@ -64,7 +63,6 @@ export const restarauntUdateValidation = [
     body('tables', 'Tables information is required').optional().isArray(),
     body('tables.*.number', 'Table number must be a number').optional().isNumeric(),
     body('tables.*.seats', 'Seats must be a number').optional().isNumeric(),
-    body('tables.*.isAvailable', 'isAvailable must be a boolean').optional().isBoolean(),
     body('cuisine', 'Invalid cuisine type').optional().custom((value) => {
         const allowedCuisines = [
             'Японская', 'Китайская', 'Русская', 'Беларуская', 'Грузинская',
@@ -83,12 +81,24 @@ export const restarauntUdateValidation = [
 
 //reservation validation
 export const reservationCreateValidation = [
-    body('restaurantId', 'Invalid restaurant ID').isMongoId(),
+    param('id', 'Invalid restaurant ID').isMongoId(),
     body('guestsAmount', 'Amount of guests must be a number').isNumeric(),
-    body('date', 'Invalid date').isISO8601().toDate(),
-    body('status', 'Invalid status').isIn(['pending', 'confirmed', 'cancelled']),
+    body('date', 'Invalid date').isISO8601(),
+    body('status', 'Invalid status').isIn(['pending', 'confirmed', 'cancelled', 'completed']),
     body('tableNumber', 'Table number must be a number').isNumeric(),
 ];
+
+export const reservationUpdateValidation = [
+    param('restaurantId', 'Invalid restaurant ID').isMongoId(),
+    param('reservationId', 'Invalid reservation ID').isMongoId(),
+    body('guestsAmount', 'Amount of guests must be a number').optional().isNumeric(),
+    body('date', 'Invalid date').optional().isISO8601(),
+    body('status', 'Invalid status').optional().isIn(['pending', 'confirmed', 'cancelled', 'completed']),
+    body('tableNumber', 'Table number must be a number').optional().isNumeric(),
+    body('timeSlots', 'Invalid time slots').optional().isArray(),
+    body('timeSlots.*', 'Invalid time slot').optional().matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
+];
+
 
 //restaurant admim validation
 export const restaurantAdmimCreation = [

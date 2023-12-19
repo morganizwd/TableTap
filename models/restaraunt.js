@@ -14,10 +14,17 @@ const RestaurantSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        workingHours: {
+            open: String, // Например, '09:00'
+            close: String, // Например, '22:00'
+        },
         tables: [{
             number: Number, 
-            seats: Number, 
-            isAvailable: Boolean, 
+            seats: Number,
+            bookings: [{
+                date: String, // Используйте формат 'YYYY-MM-DD'
+                times: [String], // Например, ['09:00', '10:00']
+            }]
         }],
         cuisine: String,
         rating: Number,
