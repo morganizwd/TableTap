@@ -35,7 +35,7 @@ export const remove = async (req, res) => {
             });
         }
 
-        await updateRestaurantRating(req.params.id);
+        // await updateRestaurantRating(req.params.id);
 
         res.json({
             success: true,
@@ -64,7 +64,7 @@ export const update = async (req, res) => {
             },
         );
         
-        await updateRestaurantRating(req.params.id);
+        // await updateRestaurantRating(req.params.id);
         
         res.json({
             success: true,
@@ -79,8 +79,11 @@ export const update = async (req, res) => {
 
 export const getAll = async (req, res) => {
     try {
-        const reviews = await ReviewModel.find();
-        
+        const restaurantId = req.params.id; // Получение ID ресторана из URL параметров
+
+        // Найти отзывы, связанные с этим рестораном
+        const reviews = await ReviewModel.find({ restaurant: restaurantId });
+
         res.json(reviews);
     } catch(err) {
         console.log(err);
