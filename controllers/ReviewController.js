@@ -1,15 +1,18 @@
 import ReviewModel from '../models/review.js';
+import updateRestaurantRating from '../utils/updateRestaurantRating.js'
 
 export const create = async (req, res) => {
     try{
         const doc = new ReviewModel({
             user: req.userId,
-            restaurant: req.restaurantId,
+            restaurant: req.params.id,
             text: req.body.text,
-            rate: req.body.rate,
+            rating: req.body.rating,
         });
 
         const review = await doc.save();
+
+        await updateRestaurantRating(req.params.id);
 
         res.json(review);
     } catch(err) {
@@ -31,6 +34,8 @@ export const remove = async (req, res) => {
                 message: 'Review doesn\'t exist',
             });
         }
+
+        await updateRestaurantRating(req.params.id);
 
         res.json({
             success: true,
@@ -55,10 +60,12 @@ export const update = async (req, res) => {
                 user: req.userId,
                 restaurant: req.restaurantId,
                 text: req.body.text,
-                rate: req.body.rate,
+                rating: req.body.rating,
             },
         );
-
+        
+        await updateRestaurantRating(req.params.id);
+        
         res.json({
             success: true,
         });

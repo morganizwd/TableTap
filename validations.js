@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 //auth validation
 export const loginValidation = [
@@ -22,14 +22,14 @@ export const registerValidation = [
 
 //review validation
 export const reviewCreateValidation = [
-    body('restaurantId', 'Invalid restaurant ID').isMongoId(),
+    param('id', 'Invalid restaurant ID').isMongoId(),
     body('text', 'Отзыв слищком короткий').isLength({ min: 4 }).isString(),
-    body('rate', 'Rate should be a number').isNumeric().isFloat({ min: 1, max: 5 }),
+    body('rating', 'Rate should be a number').isNumeric().isFloat({ min: 1, max: 5 }),
 ];
 
 export const reviewUpdateValidation = [
     body('text', 'Отзыв слищком короткий').optional().isLength({ min: 4 }).isString(),
-    body('rate', 'Rate should be a number').optional().isNumeric().isFloat({ min: 1, max: 5 }),
+    body('rating', 'Rate should be a number').optional().isNumeric().isFloat({ min: 1, max: 5 }),
 ];
 
 // restaurant validation
