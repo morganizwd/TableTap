@@ -1,16 +1,26 @@
 import RestaurantAdminModel from "../models/RestaurantAdmin.js";
 
+import UserModel from '../models/user.js'; // Убедитесь, что путь к модели User верный
+
 export const create = async (req, res) => {
-    try{
+    try {
+        const { userId, restaurantId } = req.body;
+
+        // Создаем нового администратора ресторана
         const doc = new RestaurantAdminModel({
-            user: req.userId,
-            restaurant: req.restaurantId,
+            user: userId,
+            restaurant: restaurantId,
         });
 
         const restaurantAdmin = await doc.save();
 
+        // Обновляем роль пользователя на 'restaurantAdmin'
+        await UserModel.findByIdAndUpdate(userId, {
+            $set: { role: 'restaurantAdmin' }
+        });
+
         res.json(restaurantAdmin);
-    } catch(err) {
+    } catch (err) {
         console.log(err);
         res.status(500).json({
             message: 'Create attempt failed',
@@ -19,21 +29,27 @@ export const create = async (req, res) => {
 };
 
 export const remove = async (req, res) => {
-    try{
-        const RestaurantAdminId = req.params.id;
+    try {
+        const restaurantAdminId = req.params.id;
 
-        const doc = await RestaurantAdminModel.findByIdAndDelete(RestaurantAdminId);
+        const restaurantAdmin = await RestaurantAdminModel.findById(restaurantAdminId);
 
-        if (!doc) {
+        if (!restaurantAdmin) {
             return res.status(404).json({
                 message: 'Restaurant admin doesn\'t exist',
             });
         }
 
-        res.json({
-            success: true,
+        // Обновляем роль пользователя обратно на 'user'
+        await UserModel.findByIdAndUpdate(restaurantAdmin.user, {
+            $set: { role: 'user' }
         });
-    } catch(err) {
+
+        // Удаляем запись администратора ресторана
+        await RestaurantAdminModel.findByIdAndDelete(restaurantAdminId);
+
+        res.json({ success: true });
+    } catch (err) {
         console.log(err);
         res.status(500).json({
             message: 'Remove attempt failed',
@@ -41,30 +57,30 @@ export const remove = async (req, res) => {
     }
 };
 
-export const update = async (req, res) => {
-    try{
-        const RestaurantAdminId = req.params.id;
+// export const update = async (req, res) => {
+//     try{
+//         const RestaurantAdminId = req.params.id;
 
-        await RestaurantAdminModel.updateOne(
-            {
-                _id: RestaurantAdminId,
-            },
-            {
-                user: req.userId,
-                restaurant: req.restaurantId,
-            },
-        );
+//         await RestaurantAdminModel.updateOne(
+//             {
+//                 _id: RestaurantAdminId,
+//             },
+//             {
+//                 user: req.userId,
+//                 restaurant: req.restaurantId,
+//             },
+//         );
 
-        res.json({
-            success: true,
-        });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({
-            message: 'Update attempt failed',
-        });
-    }
-};
+//         res.json({
+//             success: true,
+//         });
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({
+//             message: 'Update attempt failed',
+//         });
+//     }
+// };
 
 export const getAll = async (req, res) => {
     try {
@@ -75,6 +91,26 @@ export const getAll = async (req, res) => {
         console.log(err);
         res.status(500).json({
             message: 'Failed to retrieve reservations',
+        });
+    }
+};
+
+export const getByRestaurantId = async (req, res) => {
+    try {
+        const restaurantId = req.params.restaurantId;
+        const restaurantAdmin = await RestaurantAdminModel.findOne({ restaurant: restaurantId });
+
+        if (!restaurantAdmin) {
+            return res.status(404).json({
+                message: 'Restaurant admin for the specified restaurant does not exist',
+            });
+        }
+
+        res.json(restaurantAdmin);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Failed to retrieve the restaurant admin',
         });
     }
 };
