@@ -21,7 +21,7 @@ import {
     reservationUpdateValidation,
     restaurantAdmimCreation, } from './validations.js'
 
-import { handleValidationErrors, highRolesAuth, allRolesAuth } from './utils/index.js';
+import { handleValidationErrors, highRolesAuth, allRolesAuth, adminOnlyAuth } from './utils/index.js';
 
 mongoose 
     .connect('mongodb+srv://admin:Hesus2016@cluster0.vgtv5yo.mongodb.net/TableTap')
@@ -116,6 +116,27 @@ app.delete('/restaurant/:restaurantId/reservation-delete/:reservationId',
 //     ReservationController.update
 // );
 app.get('/restaurant/:restaurantId/reservations', highRolesAuth, ReservationController.getAll);
+
+// Restaurant Admin creation
+app.post('/restaurantadmin-create',
+    adminOnlyAuth,
+    restaurantAdmimCreation,
+    handleValidationErrors,
+    RestaurantAdminController.create
+);
+app.delete('/restaurantadmin-delete/:id',
+    adminOnlyAuth,
+    RestaurantAdminController.remove
+);
+app.get('/restaurantadmins',
+    adminOnlyAuth,
+    RestaurantAdminController.getAll
+);
+app.get('/restaurant-admin/:restaurantId', 
+    adminOnlyAuth, 
+    RestaurantAdminController.getByRestaurantId
+);
+
 
 app.listen(4444, (err) => {
     if (err) {
