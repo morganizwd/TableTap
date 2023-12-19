@@ -1,2 +1,3 @@
-export {default as checkAuth} from './checkAuth.js';
+export {default as highRolesAuth} from './highRolesAuth.js';
+export {default as allRolesAuth} from './allRolesAuth.js';
 export {default as handleValidationErrors} from './handleValidationErrors.js'; 

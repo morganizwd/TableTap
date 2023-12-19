@@ -20,7 +20,7 @@ import {
     reservationCreateValidation,
     restaurantAdmimCreation, } from './validations.js'
 
-import { handleValidationErrors, checkAuth } from './utils/index.js';
+import { handleValidationErrors, highRolesAuth, allRolesAuth } from './utils/index.js';
 
 mongoose 
     .connect('mongodb+srv://admin:Hesus2016@cluster0.vgtv5yo.mongodb.net/TableTap')
@@ -54,27 +54,35 @@ app.use(cors());
 // auth pathes 
 app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login); 
 app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register); 
-app.get('/auth/me', checkAuth, UserController.getMe);
+app.get('/auth/me', allRolesAuth, UserController.getMe);
 
 // Restaurant pathes
 app.post('/restaurant-create', 
-    checkAuth, 
+    highRolesAuth, 
     restarauntCreateValidation, 
     handleValidationErrors, 
     RestraurantController.create
 );
 app.delete('/restaurant-delete/:id',
-    checkAuth,
+    highRolesAuth,
     RestraurantController.remove
 );
 app.patch('/restaurant-edit/:id',
-    checkAuth,
+    highRolesAuth,
     restarauntUdateValidation,
     handleValidationErrors,
     RestraurantController.update
 );
 app.get('/restaurants', RestraurantController.getAll);
 app.get('/restaurant/:id', RestraurantController.getOne);
+
+// review pathes
+app.post('/restaurant/:id/review-create', 
+    allRolesAuth,
+    reviewCreateValidation,
+    handleValidationErrors,
+    ReviewController.create
+);
 
 app.listen(4444, (err) => {
     if (err) {
