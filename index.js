@@ -83,6 +83,19 @@ app.post('/restaurant/:id/review-create',
     handleValidationErrors,
     ReviewController.create
 );
+app.delete('/restaurant/:id/review-delete/:id',
+    allRolesAuth,
+    ReviewController.remove
+);
+app.patch('/restaurant/:id/review-edit/:id',
+    allRolesAuth,
+    reviewUpdateValidation,
+    handleValidationErrors,
+    ReviewController.update
+);
+app.get('/restaurant/:id/reviews',
+    ReviewController.getAll
+);
 
 app.listen(4444, (err) => {
     if (err) {
