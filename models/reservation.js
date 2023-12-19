@@ -23,6 +23,11 @@ const ReservationSchema = new mongoose.Schema(
         status: {
             type: String,
             required: true,
+            enum: ['pending', 'confirmed', 'cancelled', 'completed'] // Добавлено 'completed'
+        },
+        timeSlots:{
+            type: [String],
+            required: true
         },
         tableNumber: {
             type: Number,

@@ -18,6 +18,7 @@ import {
     restarauntCreateValidation,
     restarauntUdateValidation,
     reservationCreateValidation,
+    reservationUpdateValidation,
     restaurantAdmimCreation, } from './validations.js'
 
 import { handleValidationErrors, highRolesAuth, allRolesAuth } from './utils/index.js';
@@ -96,6 +97,25 @@ app.patch('/restaurant/:id/review-edit/:id',
 app.get('/restaurant/:id/reviews',
     ReviewController.getAll
 );
+
+// Reservation pathes
+app.post('/restaurant/:id/reservation-create',
+    allRolesAuth,
+    reservationCreateValidation,
+    handleValidationErrors,
+    ReservationController.create
+);
+app.delete('/restaurant/:restaurantId/reservation-delete/:reservationId',
+    highRolesAuth,
+    ReservationController.remove
+);
+// app.put('/restaurant/:restaurantId/reservation-update/:reservationId',
+//     highRolesAuth,
+//     reservationUpdateValidation, // здесь должна быть ваша валидация, если она нужна
+//     handleValidationErrors, // обработчик ошибок валидации, если он у вас есть
+//     ReservationController.update
+// );
+app.get('/restaurant/:restaurantId/reservations', highRolesAuth, ReservationController.getAll);
 
 app.listen(4444, (err) => {
     if (err) {
