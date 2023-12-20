@@ -13,12 +13,13 @@ import {
   Tooltip,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { Link } from 'react-router-dom';
 
 const pages = [
   { title: 'Главная', path: '/' },
   { title: 'Рестораны', path: '/restaurants' },
-  { title: 'О нас', path: '/about' },
-  { title: 'Вы владелец?', path: '/Contacts' },
+  { title: 'О нас', path: '/about-us' },
+  { title: 'Вы владелец?', path: '/contacts' },
 ];
 
 function Header() {
@@ -45,6 +46,8 @@ function Header() {
           <Typography
             variant="h6"
             noWrap
+            component={Link}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -86,7 +89,9 @@ function Header() {
             >
               {pages.map((page) => (
                 <MenuItem key={page.title} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page.title}</Typography>
+                  <Link to={page.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Typography textAlign="center">{page.title}</Typography>
+                  </Link>
                 </MenuItem>
               ))}
             </Menu>
@@ -99,7 +104,9 @@ function Header() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page.title}
+                <Link to={page.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {page.title}
+                </Link>
               </Button>
             ))}
           </Box>
@@ -127,10 +134,14 @@ function Header() {
               onClose={handleCloseUserMenu}
             >
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">Войти</Typography>
+                <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Typography textAlign="center">Войти</Typography>
+                </Link>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">Создать аккаунт</Typography>
+                <Link to="/registration" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Typography textAlign="center">Создать аккаунт</Typography>
+                </Link>
               </MenuItem>
             </Menu>
           </Box>
