@@ -11,7 +11,7 @@ export default (req, res, next) => {
             req.userRole = decoded.role; // Сохраните роль пользователя в запросе
 
             // Проверка роли пользователя
-            if (!['superAdmin', 'restaurantAdmin'].includes(req.userRole)) {
+            if (!['superAdmin'].includes(req.userRole)) {
                 return res.status(403).json({
                     message: 'Access denied: insufficient role',
                 });
