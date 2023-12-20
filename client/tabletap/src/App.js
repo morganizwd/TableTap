@@ -9,6 +9,7 @@ import RestaurantAdminPage from './Components/RestaurantAdminPage';
 import SuperAdminPage from './Components/SuperAdminPage';
 import CreateReservationPage from './Components/CreateReservationPage';
 import AboutPage from './Components/AboutPage';
+import ContactPage from './Components/Contacts';
 
 function App() {
   return (
@@ -20,7 +21,8 @@ function App() {
       {/* <RestaurantAdminPage/> */}
       {/* <SuperAdminPage/> */}
       {/* <CreateReservationPage/> */}
-      <AboutPage/>
+      {/* <AboutPage/> */}
+      {/* <ContactPage/> */}
       <Footer/>
     </div>
   );
