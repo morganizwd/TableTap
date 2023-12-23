@@ -14,70 +14,58 @@ import {
   ListItemText,
   Divider,
 } from '@mui/material';
-
-// Условные данные ресторана
-const restaurantData = {
-  _id: "6581e8579e318f53f911d61f",
-  name: "La Bella Italia",
-  address: "123 Pizza Street, Rome",
-  description: "Authentic Italian cuisine with a modern twist. Perfect for romantic dinners and family gatherings.",
-  cuisine: "Итальянская",
-  rating: 3,
-  menuUrl: "http://example.com/menu",
-  imageUrl: "http://example.com/image.jpg",
-  images: [
-    "http://example.com/image1.jpg",
-    "http://example.com/image2.jpg"
-  ],
-};
-
-const reviews = [
-    {
-      _id: "65829a257d198d9be75b7b3e",
-      user: "6580c0932c38caf892d4e6de",
-      restaurant: "6581e8579e318f53f911d61f",
-      text: "Отлично поел!",
-      rating: 5,
-      createdAt: "2023-12-20T07:39:17.775Z",
-    },
-    {
-      _id: "65829a387d198d9be75b7b42",
-      user: "6580c0932c38caf892d4e6de",
-      restaurant: "6581e8579e318f53f911d61f",
-      text: "Не понравилось.",
-      rating: 1,
-      createdAt: "2023-12-20T07:39:36.011Z",
-    },
-  ]
-  
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchReviewsByRestaurant } from '../../redux/slices/reviews';
+import { useParams } from 'react-router-dom';
+import axios from '../../redux/axios';
 
 const RestaurantProfile = () => {
-    const handleReservationClick = () => {
-        // Демонстрационное действие
-        alert("Бронирование (демонстрационно)");
-    };
+    const dispatch = useDispatch();
+    const { reviews } = useSelector(state => state.reviews)
+    const [ data, setData ] = React.useState(null);
+    const { id } = useParams();
+
+    React.useEffect(() => {
+        axios.get(`/restaurant/${id}`).then(res => {
+            setData(res.data);
+        }).catch(err => {
+            console.warn(err);
+            alert('Ошибка при получении данных о ресторане');
+            setData({}); // Set an empty object or a predefined error state
+        });
+    }, [id]); // Include id in dependency array
+
+    React.useEffect(() => {
+        if (id) {
+            dispatch(fetchReviewsByRestaurant(id));
+        }
+    }, [dispatch, id]);
+
+    if (!data) { // Check if data is not available
+        return <div>Loading...</div>; // Render loading state or similar
+    }
 
     return (
         <Container maxWidth="lg">
         <Box sx={{ my: 4 }}>
             <Typography variant="h3" gutterBottom>
-            {restaurantData.name}
+            {data.name}
             </Typography>
             <Typography variant="h6" color="text.secondary" gutterBottom>
-            {restaurantData.address}
+            {data.address}
             </Typography>
             <Typography variant="body1" paragraph>
-            {restaurantData.description}
+            {data.description}
             </Typography>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-            Кухня: {restaurantData.cuisine}
+            Кухня: {data.cuisine}
             </Typography>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-            Рейтинг: {restaurantData.rating}
+            Рейтинг: {data.rating}
             </Typography>
 
             <Grid container spacing={3}>
-            {restaurantData.images.map((image, index) => (
+            {data.images.map((image, index) => (
                 <Grid item xs={12} sm={6} key={index}>
                 <Card>
                     <CardMedia
@@ -95,7 +83,6 @@ const RestaurantProfile = () => {
         <Button
             variant="contained"
             color="primary"
-            onClick={handleReservationClick}
             sx={{ mt: 2 }}
             >
             Забронировать столик
@@ -105,7 +92,7 @@ const RestaurantProfile = () => {
             Отзывы
         </Typography>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            {reviews.map((review, index) => (
+            {reviews.items.map((review, index) => (
                 <React.Fragment key={review._id}>
                     <ListItem alignItems="flex-start">
                         <ListItemText
