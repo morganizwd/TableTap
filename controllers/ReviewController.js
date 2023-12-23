@@ -92,3 +92,19 @@ export const getAll = async (req, res) => {
         });
     }
 };
+
+export const getAllByUser = async (req, res) => {
+    try {
+        const userId = req.params.userId; // Получение ID пользователя из URL параметров
+
+        // Найти отзывы, созданные этим пользователем
+        const reviews = await ReviewModel.find({ user: userId });
+
+        res.json(reviews);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Failed to retrieve reviews for the user',
+        });
+    }
+};
