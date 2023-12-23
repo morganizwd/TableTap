@@ -97,6 +97,7 @@ app.patch('/restaurant/:id/review-edit/:id',
 app.get('/restaurant/:id/reviews',
     ReviewController.getAll
 );
+app.get('/reviews/user/:userId', allRolesAuth, ReviewController.getAllByUser);
 
 // Reservation pathes
 app.post('/restaurant/:id/reservation-create',
@@ -109,13 +110,8 @@ app.delete('/restaurant/:restaurantId/reservation-delete/:reservationId',
     highRolesAuth,
     ReservationController.remove
 );
-// app.put('/restaurant/:restaurantId/reservation-update/:reservationId',
-//     highRolesAuth,
-//     reservationUpdateValidation, // здесь должна быть ваша валидация, если она нужна
-//     handleValidationErrors, // обработчик ошибок валидации, если он у вас есть
-//     ReservationController.update
-// );
 app.get('/restaurant/:restaurantId/reservations', highRolesAuth, ReservationController.getAll);
+app.get('/reservations/user/:userId', allRolesAuth, ReservationController.getAllByUser);
 
 // Restaurant Admin creation
 app.post('/restaurantadmin-create',
