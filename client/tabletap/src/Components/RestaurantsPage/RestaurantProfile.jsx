@@ -16,12 +16,14 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchReviewsByRestaurant } from '../../redux/slices/reviews';
+import { fetchReservationsByRestaurant } from '../../redux/slices/reservations';
 import { useParams } from 'react-router-dom';
 import axios from '../../redux/axios';
 
 const RestaurantProfile = () => {
     const dispatch = useDispatch();
-    const { reviews } = useSelector(state => state.reviews)
+    const { reviews } = useSelector(state => state.reviews);
+    const { reservations } = useSelector(state => state.reservations);
     const [ data, setData ] = React.useState(null);
     const { id } = useParams();
 
@@ -40,6 +42,16 @@ const RestaurantProfile = () => {
             dispatch(fetchReviewsByRestaurant(id));
         }
     }, [dispatch, id]);
+
+    React.useEffect(() => {
+        if (id) {
+            dispatch(fetchReservationsByRestaurant(id));
+        }
+    }, [dispatch, id]);
+
+    if (!reservations) {
+        return <div>Loading reservations...</div>;
+    }
 
     if (!data) { // Check if data is not available
         return <div>Loading...</div>; // Render loading state or similar
@@ -88,6 +100,21 @@ const RestaurantProfile = () => {
             Забронировать столик
         </Button>
 
+        <Box sx={{ mt: 4 }}>
+            <Typography variant="h5" gutterBottom>
+                Активные бронирования
+            </Typography>
+            <List>
+                {reservations.items.map((reservation) => (
+                    <ListItem key={reservation._id} divider>
+                        <ListItemText
+                            primary={`Столик №${reservation.tableNumber}, ${new Date(reservation.date).toLocaleString()} (${reservation.timeSlots.join(', ')})`}
+                        />
+                    </ListItem>
+                ))}
+            </List>
+        </Box>
+        
         <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
             Отзывы
         </Typography>

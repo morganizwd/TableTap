@@ -110,7 +110,7 @@ app.delete('/restaurant/:restaurantId/reservation-delete/:reservationId',
     highRolesAuth,
     ReservationController.remove
 );
-app.get('/restaurant/:restaurantId/reservations', highRolesAuth, ReservationController.getAll);
+app.get('/restaurant/:restaurantId/reservations', allRolesAuth, ReservationController.getAll);
 app.get('/reservations/user/:userId', allRolesAuth, ReservationController.getAllByUser);
 
 // Restaurant Admin creation
