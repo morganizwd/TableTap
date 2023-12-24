@@ -1,41 +1,64 @@
 import React, { useState } from 'react';
-import { Container, Typography, TextField, Button, Grid } from '@mui/material';
+import { Button, TextField, Paper, Typography, Container } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAuth, selectIsAuth } from '../redux/slices/auth';
+import { Navigate } from 'react-router-dom';
 
-function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+const LoginPage = () => {
+  const isAuth = useSelector(selectIsAuth)
+  const dispatch = useDispatch();
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors, isValid } 
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: ''
+    },
+    mode: 'onChange',
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onSubmit = async (values) => {
+    const data = await dispatch(fetchAuth(values))
+    
+    if (!data.payload) {
+      return alert('Не удалось авторизоваться');
+    }
+
+    if ('token' in data.payload){
+      window.localStorage.setItem('token', data.payload.token)
+    } 
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    // Здесь можно добавить логику отправки данных на сервер
-  };
+  console.log('isAuth', isAuth);
+
+  if (isAuth) {
+    return <Navigate to='/'/>;
+  }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div>
+    <Container component="main" maxWidth="xs" style={{ marginTop: '30px' }}>
+      <Paper elevation={3} style={{ padding: '20px' }}>
         <Typography component="h1" variant="h5">
           Вход
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={ handleSubmit(onSubmit) }> 
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
+            type='email'
             id="email"
-            label="Email адрес"
+            label="Электронная почта"
             name="email"
             autoComplete="email"
             autoFocus
-            onChange={handleChange}
-            value={formData.email}
+            error={Boolean(errors.email?.message)}
+            helperText={errors.email?.message}
+            {... register('email', { required: 'Укажите почту' })}
           />
           <TextField
             variant="outlined"
@@ -47,22 +70,24 @@ function LoginPage() {
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange={handleChange}
-            value={formData.password}
+            error={Boolean(errors.password?.message)}
+            helperText={errors.password?.message}
+            {... register('password', { required: 'Укажите пароль' })}
           />
           <Button
+            disabled={!isValid}
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            style={{ margin: '24px 0px 16px' }}
+            style={{ marginTop: '10px' }}
           >
             Войти
           </Button>
         </form>
-      </div>
+      </Paper>
     </Container>
   );
-}
+};
 
 export default LoginPage;

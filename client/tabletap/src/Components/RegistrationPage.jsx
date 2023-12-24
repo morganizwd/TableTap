@@ -1,54 +1,80 @@
-import React, { useState } from 'react';
-import { Container, Typography, TextField, Button, Grid } from '@mui/material';
+import React from 'react';
+import { Button, TextField, Paper, Typography, Container } from '@mui/material';
+import { fetchAuth, fetchRegister, selectIsAuth } from '../redux/slices/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 
-function RegistrationPage() {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
+const RegistrationPage = () => {
+  const isAuth = useSelector(selectIsAuth)
+  const dispatch = useDispatch();
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors, isValid } 
+  } = useForm({
+    defaultValues: {
+      fullname: '',
+      email: '',
+      password: ''
+    },
+    mode: 'onChange',
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onSubmit = async (values) => {
+    const dataToSend = { ...values, role: 'user' };
+    const data = await dispatch(fetchRegister(values))
+    
+    if (!data.payload) {
+      return alert('Не удалось зарегестрироваться');
+    }
+
+    if ('token' in data.payload){
+      window.localStorage.setItem('token', data.payload.token)
+    } 
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    // Здесь можно добавить логику отправки данных на сервер
-  };
+  console.log('isAuth', isAuth);
+
+  if (isAuth) {
+    return <Navigate to='/'/>;
+  }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div>
+    <Container component="main" maxWidth="xs" style={{ marginTop: '30px' }}>
+      <Paper elevation={3} style={{ padding: '20px' }}>
         <Typography component="h1" variant="h5">
           Регистрация
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={ handleSubmit(onSubmit) }> 
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="fullName"
-            label="Полное имя"
-            name="fullName"
-            autoComplete="fullName"
+            id="username"
+            label="Имя пользователя"
+            name="username"
+            autoComplete="new-username" // Используйте нестандартное значение
             autoFocus
-            onChange={handleChange}
-            value={formData.fullName}
+            error={Boolean(errors.fullName?.message)}
+            helperText={errors.fullName?.message}
+            {...register('fullName', {required: 'Укажите имя'})}
           />
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
+            type='email'
             id="email"
-            label="Email адрес"
+            label="Электронная почта"
             name="email"
             autoComplete="email"
-            onChange={handleChange}
-            value={formData.email}
+            autoFocus
+            error={Boolean(errors.email?.message)}
+            helperText={errors.email?.message}
+            {... register('email', { required: 'Укажите почту' })}
           />
           <TextField
             variant="outlined"
@@ -60,22 +86,25 @@ function RegistrationPage() {
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange={handleChange}
-            value={formData.password}
+            error={Boolean(errors.password?.message)}
+            helperText={errors.password?.message}
+            {... register('password', { required: 'Укажите пароль' })}
           />
+          <input type="hidden" value="user" {...register('role')} />
           <Button
+            disabled={!isValid}
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            style={{ margin: '24px 0px 16px' }}
+            style={{ marginTop: '10px' }}
           >
-            Регистрация
+            Зарегистрироваться
           </Button>
         </form>
-      </div>
+      </Paper>
     </Container>
   );
-}
+};
 
 export default RegistrationPage;
