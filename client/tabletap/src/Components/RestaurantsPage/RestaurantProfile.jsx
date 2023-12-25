@@ -14,9 +14,11 @@ import {
   ListItemText,
   Divider,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchReviewsByRestaurant } from '../../redux/slices/reviews';
 import { fetchReservationsByRestaurant } from '../../redux/slices/reservations';
+import { fetchUserById } from '../../redux/slices/auth';
 import { useParams } from 'react-router-dom';
 import axios from '../../redux/axios';
 
@@ -26,6 +28,7 @@ const RestaurantProfile = () => {
     const { reservations } = useSelector(state => state.reservations);
     const [ data, setData ] = React.useState(null);
     const { id } = useParams();
+    const [usersData, setUsersData] = React.useState({});
 
     React.useEffect(() => {
         axios.get(`/restaurant/${id}`).then(res => {
@@ -48,6 +51,15 @@ const RestaurantProfile = () => {
             dispatch(fetchReservationsByRestaurant(id));
         }
     }, [dispatch, id]);
+
+    React.useEffect(() => {
+        // Загрузка данных пользователей для каждого отзыва
+        reviews.items.forEach(review => {
+            dispatch(fetchUserById(review.user._id)).then(res => {
+                setUsersData(prev => ({ ...prev, [review.user._id]: res.payload }));
+            });
+        });
+    }, [dispatch, reviews.items]);
 
     if (!reservations) {
         return <div>Loading reservations...</div>;
@@ -118,31 +130,39 @@ const RestaurantProfile = () => {
         <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
             Отзывы
         </Typography>
+        
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
             {reviews.items.map((review, index) => (
-                <React.Fragment key={review._id}>
+                 <React.Fragment key={review._id}>
                     <ListItem alignItems="flex-start">
                         <ListItemText
-                        primary={`Отзыв от ${new Date(review.createdAt).toLocaleDateString()}`}
-                        secondary={
-                            <>
-                            <Typography
-                                sx={{ display: 'inline' }}
-                                component="span"
-                                variant="body2"
-                                color="text.primary"
-                            >
-                                Рейтинг: {review.rating}
-                            </Typography>
-                            {" — " + review.text}
-                            </>
-                        }
+                            primary={
+                                <Typography component="span">
+                                    Отзыв от {usersData[review.user._id] 
+                                        ? <Link to={`/user/${review.user._id}`}>{usersData[review.user._id].fullName}</Link> 
+                                        : 'Пользователь'
+                                    } {new Date(review.createdAt).toLocaleDateString()}
+                                </Typography>
+                            }
+                            secondary={
+                                <>
+                                    <Typography
+                                        sx={{ display: 'inline' }}
+                                        component="span"
+                                        variant="body2"
+                                        color="text.primary"
+                                    >
+                                    Рейтинг: {review.rating}
+                                    </Typography>
+                                    {" — " + review.text}
+                                </>
+                            }
                         />
-                    </ListItem>
-                    {index < reviews.length - 1 && <Divider variant="inset" component="li" />}
-                </React.Fragment>
-            ))}
-        </List>
+                        </ListItem>
+                        {index < reviews.length - 1 && <Divider variant="inset" component="li" />}
+                    </React.Fragment>
+                ))}
+            </List>
 
         </Container>
     );
