@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
-
+import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectIsAuth } from '../redux/slices/auth';
 
@@ -28,9 +28,11 @@ const pages = [
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-  const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
+  const token = window.localStorage.getItem('token');
+  const userId = isAuth && token ? jwtDecode(token)._id : null;
+  const dispatch = useDispatch();
+
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -151,10 +153,15 @@ function Header() {
               onClose={handleCloseUserMenu}
             >
               <MenuItem>
+                <Link to={`/user/${userId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    Профиль
+                </Link>
+              </MenuItem>
+              <MenuItem>
                   <Typography onClick={onClickLogout}>
                     Выйти
                   </Typography>
-                </MenuItem>
+              </MenuItem>
             </Menu>
             ) : (
               <Menu
