@@ -9,10 +9,13 @@ export const fetchReviewsByRestaurant = createAsyncThunk(
   }
 );
 
-export const fetchReviewsByUser = createAsyncThunk('reviews/user/:userId', async () =>{
-  const { data } = await axios.get('reviews')
-  return data;
-});
+export const fetchReviewsByUser = createAsyncThunk(
+  `reviews/fetchReviewsByUser`, 
+  async (userId) => {
+    const { data } = await axios.get(`/reviews/user/${userId}`);
+    return data;
+  }
+);
 
 const initialState = {
   reviews: {
@@ -41,15 +44,13 @@ const reviewSlice = createSlice({
       
       //fetchReviewsByUser
       .addCase(fetchReviewsByUser.pending, (state) => {
-        state.reviews.items = [];
         state.reviews.status = 'loading';
       })
-      .addCase(fetchReviewsByUser.fulfilled, (state) => {
-        state.reviews.items = [];
+      .addCase(fetchReviewsByUser.fulfilled, (state, action) => {
+        state.reviews.items = action.payload; // Assuming the payload is an array of reviews
         state.reviews.status = 'loaded';
       })
       .addCase(fetchReviewsByUser.rejected, (state) => {
-        state.reviews.items = [];
         state.reviews.status = 'error';
       })
   ]
