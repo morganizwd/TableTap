@@ -11,6 +11,7 @@ import {
   ListItemText,
   Divider, 
 } from '@mui/material';
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserById } from '../redux/slices/auth';
 import { fetchReviewsByUser } from '../redux/slices/reviews';
@@ -62,34 +63,39 @@ const UserProfile = () => {
 
         <Divider sx={{ my: 2 }} />
 
-        {/* <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+        <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
             Отзывы
         </Typography>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          {reviews.map((review, index) => (
+          {reviews.items.map((review, index) => (
                 <React.Fragment key={review._id}>
-                    <ListItem alignItems="flex-start">
-                        <ListItemText
-                        primary={`Отзыв от ${new Date(review.createdAt).toLocaleDateString()}`}
-                        secondary={
-                            <>
-                            <Typography
-                                sx={{ display: 'inline' }}
-                                component="span"
-                                variant="body2"
-                                color="text.primary"
-                            >
-                                Рейтинг: {review.rating}
-                            </Typography>
-                            {" — " + review.text}
-                            </>
-                        }
-                        />
-                    </ListItem>
+                    <ListItemText
+                      primary={
+                        <>
+                          <Link to={`/restaurants/profile/${review.restaurant._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            {review.restaurant.name}
+                          </Link>
+                          {` ${new Date(review.createdAt).toLocaleDateString()}`}
+                        </>
+                      }
+                      secondary={
+                        <>
+                          <Typography
+                            sx={{ display: 'inline' }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            Рейтинг: {review.rating}
+                          </Typography>
+                          {" — " + review.text}
+                        </>
+                      }
+                    />
                     {index < reviews.length - 1 && <Divider variant="inset" component="li" />}
                 </React.Fragment>
             ))}
-        </List> */}
+        </List>
 
         <List>
           <ListItem>
