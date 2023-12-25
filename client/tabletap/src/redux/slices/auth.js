@@ -16,9 +16,16 @@ export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async () => {
     return data;
 }); 
 
+export const fetchUserById = createAsyncThunk('auth/fetchUserById', async (userId) => {
+    const { data } = await axios.get(`/user/${userId}`);
+    return data;
+});
+
 const initialState = {
     data: null,
     status: 'loading',
+    // Можно добавить еще одно состояние для хранения данных пользователя по ID
+    userData: null,
 };
 
 const authSlice = createSlice({
@@ -27,7 +34,9 @@ const authSlice = createSlice({
     reducers: {
         logout: (state) => {
             state.data = null;
+            state.status = 'null';
             state.status = 'null'
+            state.userData = null;
         }
     },
     extraReducers: (builder) => {
@@ -67,6 +76,18 @@ const authSlice = createSlice({
             .addCase(fetchRegister.rejected, (state) => {
                 state.status = 'error';
                 state.data = null;
+            })
+            .addCase(fetchUserById.pending, (state) => {
+                state.status = 'loading';
+                state.userData = null;
+            })
+            .addCase(fetchUserById.fulfilled, (state, action) => {
+                state.status = 'loaded';
+                state.userData = action.payload;
+            })
+            .addCase(fetchUserById.rejected, (state) => {
+                state.status = 'error';
+                state.userData = null;
             });
     },
 });
