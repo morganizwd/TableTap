@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, isFulfilled } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, } from "@reduxjs/toolkit";
 import axios from "../axios.js";
 
 export const fetchRestaurants = createAsyncThunk('restaurants/fetchProdicts', async () => {
@@ -13,6 +13,30 @@ export const fetchRestaurantById = createAsyncThunk(
       return data;
     }
 );  
+
+export const createRestaurant = createAsyncThunk(
+    'restaurants/create',
+    async (restaurantData) => {
+        const response = await axios.post('restaurant-create', restaurantData);
+        return response.data;
+    }
+);
+
+export const updateRestaurant = createAsyncThunk(
+    'restaurants/update',
+    async ({ id, updatedData }) => {
+        const response = await axios.patch(`/restaurant-edit/${id}`, updatedData);
+        return response.data;
+    }
+);
+
+export const deleteRestaurant = createAsyncThunk(
+    'restaurants/delete',
+    async (id) => {
+        await axios.delete(`/restaurant-delete/${id}`);
+        return id;
+    }
+);
 
 const initialState = { 
     restaurants: {
@@ -54,6 +78,25 @@ const restarauntSlice = createSlice({
                 state.currentRestaurant = null;
                 state.status = 'error';
             })
+
+            .addCase(createRestaurant.fulfilled, (state, action) => {
+                state.restaurants.items.push(action.payload);
+            })
+
+            .addCase(updateRestaurant.fulfilled, (state, action) => {
+                const index = state.restaurants.items.findIndex(
+                    (restaurant) => restaurant._id === action.payload._id
+                );
+                if (index !== -1) {
+                    state.restaurants.items[index] = action.payload;
+                }
+            })
+
+            .addCase(deleteRestaurant.fulfilled, (state, action) => {
+                state.restaurants.items = state.restaurants.items.filter(
+                    (restaurant) => restaurant._id !== action.payload
+                );
+            });
     }
 });
 

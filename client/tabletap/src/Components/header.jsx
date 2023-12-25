@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   AppBar,
   Box,
@@ -14,25 +14,21 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, selectIsAuth } from '../redux/slices/auth';
+import { logout, selectIsAuth, fetchAuthMe } from '../redux/slices/auth';
 
-const pages = [
-  { title: 'Главная', path: '/' },
-  { title: 'Рестораны', path: '/restaurants' },
-  { title: 'О нас', path: '/about-us' },
-  { title: 'Вы владелец?', path: '/contacts' },
-];
-
-function Header() {
+const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const isAuth = useSelector(selectIsAuth);
-  const token = window.localStorage.getItem('token');
-  const userId = isAuth && token ? jwtDecode(token)._id : null;
+  const user = useSelector((state) => state.auth.data);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (window.localStorage.getItem('token')) {
+      dispatch(fetchAuthMe());
+    }
+  }, [dispatch]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -51,11 +47,22 @@ function Header() {
   };
 
   const onClickLogout = () => {
-    if (window.confirm('Вы действительно хотие выйти из учетной записи?')) {
+    if (window.confirm('Вы действительно хотите выйти из учетной записи?')) {
       dispatch(logout());
       window.localStorage.removeItem('token');
     }
   };
+
+  const pages = [
+    { title: 'Главная', path: '/' },
+    { title: 'Рестораны', path: '/restaurants' },
+    { title: 'О нас', path: '/about-us' },
+    { title: 'Вы владелец?', path: '/contacts' },
+  ];
+
+  if (user && user.role === 'superAdmin') {
+    pages.push({ title: 'Админка', path: '/adminpage' });
+  }
 
   return (
     <AppBar position="static">
@@ -153,15 +160,16 @@ function Header() {
               onClose={handleCloseUserMenu}
             >
               <MenuItem>
-                <Link to={`/user/${userId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    Профиль
-                </Link>
-              </MenuItem>
-              <MenuItem>
-                  <Typography onClick={onClickLogout}>
+                  <Link to={`/user/${user?._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      Профиль
+                  </Link>
+                </MenuItem>
+                
+                <MenuItem onClick={onClickLogout}>
+                  <Typography style={{ color: 'inherit' }}>
                     Выйти
                   </Typography>
-              </MenuItem>
+                </MenuItem>
             </Menu>
             ) : (
               <Menu

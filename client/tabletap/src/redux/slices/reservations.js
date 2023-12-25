@@ -9,6 +9,22 @@ export const fetchReservationsByRestaurant = createAsyncThunk(
     }
 );
 
+export const createReservation = createAsyncThunk(
+    'reservations/create',
+    async (reservationData) => {
+        const response = await axios.post(`/restaurant/${reservationData.restaurantId}/reservation-create`, reservationData);
+        return response.data;
+    }
+);
+
+export const deleteReservation = createAsyncThunk(
+    'reservations/delete',
+    async ({ restaurantId, reservationId }) => {
+        await axios.delete(`/restaurant/${restaurantId}/reservation-delete/${reservationId}`);
+        return reservationId;
+    }
+);
+
 const initialState = {
     reservations: {
         items: [],
@@ -16,24 +32,31 @@ const initialState = {
     }
 };
 
-const reseravationSlice = createSlice({
+const reservationSlice = createSlice({
     name: 'reservations',
     initialState,
     reducers: {},
-    extraReducers: (builder) => [
+    extraReducers: (builder) => {
         builder
-            //fetchReservationsByRestaurant
             .addCase(fetchReservationsByRestaurant.pending, (state) => {
                 state.reservations.status = 'loading';
             })
             .addCase(fetchReservationsByRestaurant.fulfilled, (state, action) => {
-                state.reservations.items = action.payload; 
+                state.reservations.items = action.payload;
                 state.reservations.status = 'loaded';
             })
             .addCase(fetchReservationsByRestaurant.rejected, (state) => {
                 state.reservations.status = 'error';
             })
-    ]
+            .addCase(createReservation.fulfilled, (state, action) => {
+                state.reservations.items.push(action.payload);
+            })
+            .addCase(deleteReservation.fulfilled, (state, action) => {
+                state.reservations.items = state.reservations.items.filter(
+                    (reservation) => reservation._id !== action.payload
+                );
+            });
+    }
 });
 
-export const reseravationReducer = reseravationSlice.reducer;
+export const reservationReducer = reservationSlice.reducer;

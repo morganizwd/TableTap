@@ -57,40 +57,14 @@ export const remove = async (req, res) => {
     }
 };
 
-// export const update = async (req, res) => {
-//     try{
-//         const RestaurantAdminId = req.params.id;
-
-//         await RestaurantAdminModel.updateOne(
-//             {
-//                 _id: RestaurantAdminId,
-//             },
-//             {
-//                 user: req.userId,
-//                 restaurant: req.restaurantId,
-//             },
-//         );
-
-//         res.json({
-//             success: true,
-//         });
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).json({
-//             message: 'Update attempt failed',
-//         });
-//     }
-// };
-
 export const getAll = async (req, res) => {
     try {
-        const restaurantAdmins = await RestaurantAdminModel.find();
-        
+        const restaurantAdmins = await RestaurantAdminModel.find().populate('restaurant');
         res.json(restaurantAdmins);
     } catch(err) {
         console.log(err);
         res.status(500).json({
-            message: 'Failed to retrieve reservations',
+            message: 'Failed to retrieve restaurant admins',
         });
     }
 };

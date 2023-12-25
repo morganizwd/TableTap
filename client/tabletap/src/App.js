@@ -39,10 +39,9 @@ function App() {
                   <Route path='/restaurants/profile/:id' element={<RestaurantProfile/>}></Route>
                   {/* <Route path='/user' element={<UserProfile/>}></Route> */}
                   <Route path='/user/:id' element={<UserProfile/>} />
-
-                  <Route path='/restaurant-admin-page' element={<RestaurantAdminPage/>}></Route>
+                  <Route path='/restaurant-admin-page/:restaurantId' element={<RestaurantAdminPage/>}></Route>
                   <Route path='/adminpage' element={<SuperAdminPage/>}></Route>
-                  <Route path='/restaurants/restaurant/reservation' element={<CreateReservationPage/>}></Route>
+                  <Route path="/restaurant/:restaurantId/reservation-create" element={<CreateReservationPage />} />
                   <Route path='/about-us' element={<AboutPage/>}></Route>
                   <Route path='/contacts' element={<ContactPage/>}></Route>
                   {!isAuth && <Route path='/registration' element={<RegistrationPage/>} />}

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams, Navigate } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -14,24 +15,21 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchReservationsByRestaurant } from '../redux/slices/reservations';
 
 function RestaurantAdminPage() {
-  // Демонстрационные данные бронирований
-  const reservations = [
-    {
-      _id: "6581ef72bff93fc517178218",
-      user: "6580c0932c38caf892d4e6de",
-      restaurant: "6581e8579e318f53f911d61f",
-      guestsAmount: 4,
-      date: "2023-07-20T19:00:00.000Z",
-      status: "pending",
-      timeSlots: ["12:00"],
-      tableNumber: 1,
-    },
-    // ... Дополнительные бронирования
-  ];
+  const dispatch = useDispatch();
+  const { items: reservations, status } = useSelector(state => state.reservations.reservations);
+  const { restaurantId } = useParams();
+  const user = useSelector((state) => state.auth.data);
 
-  // Функции для действий (пока что пустые)
+  useEffect(() => {
+    if (restaurantId) {
+      dispatch(fetchReservationsByRestaurant(restaurantId));
+    }
+  }, [dispatch, restaurantId]);
+
   const handleAddReservation = () => {
     console.log("Добавление бронирования");
   };
@@ -39,6 +37,14 @@ function RestaurantAdminPage() {
   const handleDeleteReservation = (reservationId) => {
     console.log("Удаление бронирования:", reservationId);
   };
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (user.role !== 'restaurantAdmin' || (user.restaurantId && user.restaurantId.toString() !== restaurantId)) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <Container>
@@ -69,7 +75,7 @@ function RestaurantAdminPage() {
             <TableBody>
               {reservations.map((reservation) => (
                 <TableRow key={reservation._id}>
-                  <TableCell>{reservation.date}</TableCell>
+                  <TableCell>{new Date(reservation.date).toLocaleString()}</TableCell>
                   <TableCell>{reservation.guestsAmount}</TableCell>
                   <TableCell>{reservation.status}</TableCell>
                   <TableCell>{reservation.tableNumber}</TableCell>

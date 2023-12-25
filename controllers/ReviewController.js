@@ -24,27 +24,20 @@ export const create = async (req, res) => {
 };
 
 export const remove = async (req, res) => {
-    try{
-        const reviewId = req.params.id;
+    try {
+        const reviewId = req.params.reviewId;
 
-        const doc = await ReviewModel.findByIdAndDelete(reviewId);
+        // Удаление отзыва по ID
+        const deletedReview = await ReviewModel.findByIdAndDelete(reviewId);
 
-        if (!doc) {
-            return res.status(404).json({
-                message: 'Review doesn\'t exist',
-            });
+        if (!deletedReview) {
+            return res.status(404).json({ message: 'Review doesn\'t exist' });
         }
 
-        // await updateRestaurantRating(req.params.id);
-
-        res.json({
-            success: true,
-        });
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({
-            message: 'Remove attempt failed',
-        });
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error in delete review:', error);
+        res.status(500).json({ message: 'Remove attempt failed', error: error.toString() });
     }
 };
 

@@ -50,10 +50,10 @@ export const restarauntCreateValidation = [
         }
         return true;
     }),
-    body('menuUrl', 'Menu URL should be valid URL').optional().isURL(),
-    body('imageUrl', 'Image URL should be valid URL').optional().isURL(),
+    // body('menuUrl', 'Menu URL should be valid URL').optional().isURL(),
+    // body('imageUrl', 'Image URL should be valid URL').optional().isURL(),
     body('images', 'Images should be an array').optional().isArray(),
-    body('images.*', 'Each image should be a valid URL').optional().isURL(),
+    // body('images.*', 'Each image should be a valid URL').optional().isURL(),
 ];
 
 export const restarauntUdateValidation = [

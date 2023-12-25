@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Paper,
@@ -14,34 +14,43 @@ import {
   Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRestaurantAdmins, createRestaurantAdmin, deleteRestaurantAdmin } from '../redux/slices/restaurantAdmins';
 
 function SuperAdminPage() {
+
+  const dispatch = useDispatch();
+  const { items: admins, status } = useSelector(state => state.restaurantadmins.restaurantadmins);
+
   const [userId, setUserId] = useState('');
   const [restaurantId, setRestaurantId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Демонстрационные данные админов ресторанов
-  const admins = [
-    {
-      _id: "6581f71f0b159df3fd33a58a",
-      user: "6580c0932c38caf892d4e6de",
-      restaurant: "6581e8579e318f53f911d61f",
-    },
-    // ... Дополнительные админы
-  ];
+  useEffect(() => {
+    dispatch(fetchRestaurantAdmins());
+  }, [dispatch]);
 
-  // Функции для действий (пока что пустые)
   const handleCreateAdmin = () => {
-    console.log("Создание админа ресторана", { userId, restaurantId });
+    if (userId && restaurantId) {
+      dispatch(createRestaurantAdmin({ userId, restaurantId }));
+    }
   };
 
   const handleDeleteAdmin = (adminId) => {
-    console.log("Удаление админа ресторана:", adminId);
+    dispatch(deleteRestaurantAdmin(adminId));
   };
 
   const handleSearch = () => {
     console.log("Поиск админа ресторана по ID ресторана:", searchTerm);
   };
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'error') {
+    return <div>Error loading data.</div>;
+  }
 
   return (
     <Container>
@@ -85,6 +94,7 @@ function SuperAdminPage() {
                 <TableCell>ID Админа</TableCell>
                 <TableCell>ID Пользователя</TableCell>
                 <TableCell>ID Ресторана</TableCell>
+                <TableCell>Имя Ресторана</TableCell>
                 <TableCell>Действия</TableCell>
               </TableRow>
             </TableHead>
@@ -93,7 +103,8 @@ function SuperAdminPage() {
                 <TableRow key={admin._id}>
                   <TableCell>{admin._id}</TableCell>
                   <TableCell>{admin.user}</TableCell>
-                  <TableCell>{admin.restaurant}</TableCell>
+                  <TableCell>{admin.restaurant._id}</TableCell>
+                  <TableCell>{admin.restaurant.name}</TableCell> {/* Убедитесь, что здесь используется .name */}
                   <TableCell>
                     <IconButton
                       color="secondary"

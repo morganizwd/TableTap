@@ -18,7 +18,6 @@ import {
     restarauntCreateValidation,
     restarauntUdateValidation,
     reservationCreateValidation,
-    reservationUpdateValidation,
     restaurantAdmimCreation, } from './validations.js'
 
 import { handleValidationErrors, highRolesAuth, allRolesAuth, adminOnlyAuth } from './utils/index.js';
@@ -43,24 +42,25 @@ const upload = multer({ storage });
 
 app.use(express.json()); 
 app.use(cors());
-// app.use('/uploads', express.static('uploads')); 
+app.use('/uploads', express.static('uploads')); 
 
-// //media upload pathes
-// app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
-//     res.json({
-//         url: `/uploads/${req.file.originalname}`,
-//     });
-// });
+//media upload pathes
+app.post('/upload', highRolesAuth, upload.single('image'), (req, res) => {
+    res.json({
+        url: `/uploads/${req.file.originalname}`,
+    });
+});
 
 // auth pathes 
 app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login); 
 app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register); 
 app.get('/auth/me', allRolesAuth, UserController.getMe);
 app.get('/user/:userId', allRolesAuth, UserController.getUserById);
+app.patch('/user/:userId/update', allRolesAuth, UserController.updateUser);
 
 // Restaurant pathes
 app.post('/restaurant-create', 
-    highRolesAuth, 
+    adminOnlyAuth, 
     restarauntCreateValidation, 
     handleValidationErrors, 
     RestraurantController.create
@@ -85,10 +85,7 @@ app.post('/restaurant/:id/review-create',
     handleValidationErrors,
     ReviewController.create
 );
-app.delete('/restaurant/:id/review-delete/:id',
-    allRolesAuth,
-    ReviewController.remove
-);
+app.delete('/restaurant/review-delete/:reviewId', allRolesAuth, ReviewController.remove);
 app.patch('/restaurant/:id/review-edit/:id',
     allRolesAuth,
     reviewUpdateValidation,
@@ -111,7 +108,7 @@ app.delete('/restaurant/:restaurantId/reservation-delete/:reservationId',
     highRolesAuth,
     ReservationController.remove
 );
-app.get('/restaurant/:restaurantId/reservations', highRolesAuth, ReservationController.getAll);
+app.get('/restaurant/:restaurantId/reservations', allRolesAuth, ReservationController.getAll);
 app.get('/reservations/user/:userId', allRolesAuth, ReservationController.getAllByUser);
 
 // Restaurant Admin creation

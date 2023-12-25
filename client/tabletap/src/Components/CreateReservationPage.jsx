@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -11,19 +12,35 @@ import {
   MenuItem,
   Box
 } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { createReservation } from '../redux/slices/reservations';
 
 function CreateReservationPage() {
+  const dispatch = useDispatch();
+  const { restaurantId } = useParams();
   const [guestsAmount, setGuestsAmount] = useState('');
   const [date, setDate] = useState('');
   const [status, setStatus] = useState('pending');
   const [tableNumber, setTableNumber] = useState('');
   const [timeSlots, setTimeSlots] = useState([]);
 
-  // Функция для отправки данных формы (пока что пустая)
   const handleSubmit = () => {
-    const reservationData = { guestsAmount, date, status, tableNumber, timeSlots };
-    console.log("Отправка данных бронирования:", reservationData);
-    // Здесь можно добавить логику для отправки данных на сервер
+    // Преобразование номера столика в число
+    const tableNumberInt = parseInt(tableNumber, 10);
+
+    // Формирование данных для бронирования
+    const reservationData = {
+      guestsAmount,
+      date, // Отправляем дату в формате YYYY-MM-DD
+      status,
+      tableNumber: tableNumberInt,
+      timeSlots,
+      restaurantId,
+    };
+
+    console.log("Отправка данных бронирования:", reservationData); // Для отладки
+
+    dispatch(createReservation(reservationData));
   };
 
   return (
@@ -40,8 +57,8 @@ function CreateReservationPage() {
           sx={{ mb: 2, mr: 2, width: '30ch' }}
         />
         <TextField
-          label="Дата и время"
-          type="datetime-local"
+          label="Дата"
+          type="date"
           variant="outlined"
           value={date}
           onChange={(e) => setDate(e.target.value)}
@@ -59,8 +76,6 @@ function CreateReservationPage() {
             onChange={(e) => setStatus(e.target.value)}
           >
             <MenuItem value="pending">Ожидание</MenuItem>
-            <MenuItem value="confirmed">Подтверждено</MenuItem>
-            <MenuItem value="cancelled">Отменено</MenuItem>
           </Select>
         </FormControl>
         <TextField
@@ -69,6 +84,7 @@ function CreateReservationPage() {
           value={tableNumber}
           onChange={(e) => setTableNumber(e.target.value)}
           sx={{ mb: 2, mr: 2, width: '30ch' }}
+          type="number" // Указываем тип number для правильного ввода
         />
         <TextField
           label="Выбранные временные слоты"

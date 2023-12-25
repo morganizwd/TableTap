@@ -21,6 +21,18 @@ export const fetchUserById = createAsyncThunk('auth/fetchUserById', async (userI
     return data;
 });
 
+export const updateUser = createAsyncThunk(
+    'auth/updateUser',
+    async ({ userId, formData }) => {
+        const response = await axios.patch(`/user/update/${userId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    }
+);
+
 const initialState = {
     data: null,
     status: 'loading',
@@ -88,7 +100,11 @@ const authSlice = createSlice({
             .addCase(fetchUserById.rejected, (state) => {
                 state.status = 'error';
                 state.userData = null;
-            });
+            })
+            .addCase(updateUser.fulfilled, (state, action) => {
+            // Обновляем данные пользователя после успешного запроса
+            state.userData = action.payload;
+        });
     },
 });
 
