@@ -56,6 +56,7 @@ app.use(cors());
 app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login); 
 app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register); 
 app.get('/auth/me', allRolesAuth, UserController.getMe);
+app.get('/user/:userId', allRolesAuth, UserController.getUserById);
 
 // Restaurant pathes
 app.post('/restaurant-create', 
