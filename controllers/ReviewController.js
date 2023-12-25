@@ -97,7 +97,7 @@ export const getAllByUser = async (req, res) => {
     try {
         const userId = req.params.userId; 
 
-        const reviews = await ReviewModel.find({ user: userId });
+        const reviews = await ReviewModel.find({ user: userId }).populate('restaurant', 'name _id');
 
         res.json(reviews);
     } catch(err) {
