@@ -79,10 +79,10 @@ export const update = async (req, res) => {
 
 export const getAll = async (req, res) => {
     try {
-        const restaurantId = req.params.id; // Получение ID ресторана из URL параметров
+        const restaurantId = req.params.id;
 
-        // Найти отзывы, связанные с этим рестораном
-        const reviews = await ReviewModel.find({ restaurant: restaurantId });
+        // Найти отзывы, связанные с этим рестораном, и заполнить информацию о пользователях
+        const reviews = await ReviewModel.find({ restaurant: restaurantId }).populate('user', 'fullName');
 
         res.json(reviews);
     } catch(err) {
@@ -95,9 +95,8 @@ export const getAll = async (req, res) => {
 
 export const getAllByUser = async (req, res) => {
     try {
-        const userId = req.params.userId; // Получение ID пользователя из URL параметров
+        const userId = req.params.userId; 
 
-        // Найти отзывы, созданные этим пользователем
         const reviews = await ReviewModel.find({ user: userId });
 
         res.json(reviews);
