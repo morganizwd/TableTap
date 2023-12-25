@@ -37,7 +37,9 @@ function App() {
                 <Routes>
                   <Route path='/restaurants' element={<RestaurantsPage/>}></Route>
                   <Route path='/restaurants/profile/:id' element={<RestaurantProfile/>}></Route>
-                  <Route path='/user' element={<UserProfile/>}></Route>
+                  {/* <Route path='/user' element={<UserProfile/>}></Route> */}
+                  <Route path='/user/:id' element={<UserProfile/>} />
+
                   <Route path='/restaurant-admin-page' element={<RestaurantAdminPage/>}></Route>
                   <Route path='/adminpage' element={<SuperAdminPage/>}></Route>
                   <Route path='/restaurants/restaurant/reservation' element={<CreateReservationPage/>}></Route>
